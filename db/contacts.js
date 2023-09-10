@@ -30,9 +30,11 @@ const getContactById = async (contactId) => {
     const data = await loadContacts();
     const user = data.find((contact) => String(contact.id) === contactId) || null;
     if (user === null) {
-      return console.log("There no user with this Id");
+      console.log("There no user with this Id");
+      return null;
+    } else {
+      return user;
     }
-    return user;
   } catch (error) {
     console.log(error.message);
   }
@@ -45,12 +47,14 @@ const removeContact = async (contactId) => {
 
     const userIdIndex = data.findIndex((contact) => String(contact.id) === contactId);
     if (userIdIndex === -1) {
-      return console.log("There no user with this Id");
-    }
-    const updateData = data.splice(userIdIndex, 1);
-    await saveContacts(data);
+      console.log("There no user with this Id");
+      return null;
+    } else {
+      const updateData = data.splice(userIdIndex, 1);
+      await saveContacts(data);
 
-    return updateData;
+      return updateData;
+    }
   } catch (error) {
     console.log(error.message);
   }
