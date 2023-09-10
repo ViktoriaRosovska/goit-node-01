@@ -12,6 +12,7 @@ program
 program.parse(process.argv);
 
 const argv = program.opts();
+
 const invokeAction = async ({ action, id, name, email, phone }) => {
   switch (action) {
     case "list":
