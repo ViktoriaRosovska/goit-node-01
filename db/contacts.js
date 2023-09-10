@@ -4,23 +4,31 @@ const { nanoid } = require("nanoid");
 const path = require("path");
 const contacts = path.join(__dirname, "contacts.json");
 
+const loadContacts = async () => {
+  const data = await fs.readFile(contacts);
+  const json = data.toString();
+  return JSON.parse(json);
+};
+
+const saveContacts = async (data) => {
+  await fs.writeFile(contacts, JSON.stringify(data));
+};
+
 const listContacts = async () => {
-  // ...твій код. Повертає масив контактів.
+  // Повертає масив контактів.
   try {
-    const data = await fs.readFile(contacts);
-    const allContacts = JSON.parse(data);
-    return allContacts;
+    const data = await loadContacts();
+    return data;
   } catch (error) {
     console.log(error.message);
   }
 };
 
 const getContactById = async (contactId) => {
-  // ...твій код. Повертає об'єкт контакту з таким id. Повертає null, якщо контакт з таким id не знайдений.
+  // Повертає об'єкт контакту з таким id. Повертає null, якщо контакт з таким id не знайдений.
   try {
-    const data = await fs.readFile(contacts);
-    const res = JSON.parse(data);
-    const user = res.find((contact) => contact.id === contactId) || null;
+    const data = await loadContacts();
+    const user = data.find((contact) => String(contact.id) === contactId) || null;
     if (user === null) {
       return console.log("There no user with this Id");
     }
@@ -31,17 +39,16 @@ const getContactById = async (contactId) => {
 };
 
 const removeContact = async (contactId) => {
-  // ...твій код. Повертає об'єкт видаленого контакту. Повертає null, якщо контакт з таким id не знайдений.
+  // Повертає об'єкт видаленого контакту. Повертає null, якщо контакт з таким id не знайдений.
   try {
-    const data = await fs.readFile(contacts);
-    const res = JSON.parse(data);
+    const data = await loadContacts();
 
-    const userIdIndex = res.findIndex((contact) => contact.id === contactId);
+    const userIdIndex = data.findIndex((contact) => String(contact.id) === contactId);
     if (userIdIndex === -1) {
       return console.log("There no user with this Id");
     }
-    const updateData = res.splice(userIdIndex, 1);
-    await fs.writeFile(contacts, JSON.stringify(res));
+    const updateData = data.splice(userIdIndex, 1);
+    await saveContacts(data);
 
     return updateData;
   } catch (error) {
@@ -50,18 +57,19 @@ const removeContact = async (contactId) => {
 };
 
 const addContact = async (name, email, phone) => {
-  // ...твій код. Повертає об'єкт доданого контакту.
+  // Повертає об'єкт доданого контакту.
   try {
-    const data = await fs.readFile(contacts);
-    const res = JSON.parse(data);
     const newUser = {
+      id: nanoid(),
       name,
       email,
       phone,
-      id: nanoid(),
     };
 
-    await fs.writeFile(contacts, `${JSON.stringify([...res, newUser])}`);
+    const data = await loadContacts();
+    data.push(newUser);
+    await saveContacts(data);
+
     return newUser;
   } catch (error) {
     console.log(error.message);

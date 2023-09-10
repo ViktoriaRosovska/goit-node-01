@@ -1,14 +1,17 @@
-const path = require("path");
 const contacts = require("./db/contacts");
 
-// console.log(contacts);
-//listContacts();
-// getContactById("AeHIrLTr6JkxGE6SN-0Rw");
-// removeContact("AeHIrLTr6JkxGE6SN-0Rw");
-// addContact("Bob Snail", "bobby@gmail.com", "56667-3434-34343");
+const { Command } = require("commander");
+const program = new Command();
+program
+  .option("-a, --action <type>", "choose action")
+  .option("-i, --id <type>", "user id")
+  .option("-n, --name <type>", "user name")
+  .option("-e, --email <type>", "user email")
+  .option("-p, --phone <type>", "user phone");
 
-const argv = require("yargs").argv;
+program.parse(process.argv);
 
+const argv = program.opts();
 const invokeAction = async ({ action, id, name, email, phone }) => {
   switch (action) {
     case "list":
